@@ -1,0 +1,10 @@
+target/
+/project/metals.sbt
+/project/project/
+.bloop/
+.bsp/
+.metals/
+.vscode/
+graph.dot
+*.dot
+*.pdf
