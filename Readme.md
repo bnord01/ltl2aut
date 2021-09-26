@@ -6,8 +6,8 @@ Scala implementation of the LTL2AUT algorithm by Daniele, Giunchiglia and Vardi 
 Model checking a simple cyclic traffic light for some properties. See [Example.scala](src/main/scala/mc/example/Example.scala)
 
 ```scala
-  // The set of atomic prepositions
-  implicit val atomicPrepositions: Set[AP] = Set("red", "green", "yellow")
+  // The set of atomic propositions
+  implicit val atomicPropositions: Set[AP] = Set("red", "green", "yellow")
 
   // Constructing an automaton representing a simple traffic light
   val (a, b, c, d)       = ("a:green", "b:yellow", "c:red", "d:red,yellow")
