@@ -128,5 +128,8 @@ trait Core {
     return Automata(Q, I, F, d)
   }
 
+  implicit class formula2Aut(f:Formula) {
+    def toAut = LTL2AUT.createAutomaton(f)
+  }
 }
 

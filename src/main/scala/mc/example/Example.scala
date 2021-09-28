@@ -14,7 +14,7 @@ import scala.language.postfixOps
 object Example extends App {
 
   // The set of atomic prepositions
-  implicit val atomicPrepositions: Set[AP] = Set("red", "green", "yellow")
+  implicit val atomicPropositions: Set[AP] = Set("red", "green", "yellow")
 
   // Constructing an automaton representing a simple traffic light
   val (a, b, c, d)       = ("a:green", "b:yellow", "c:red", "d:red,yellow")

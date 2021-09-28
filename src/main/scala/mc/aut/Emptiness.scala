@@ -9,7 +9,7 @@ implicit class AutomataEmptiness[State](aut: Automata[State]) {
   def isEmpty(s0: State): Boolean = {
     // Source: http://spinroot.com/spin/symposia/ws05/019_paper.pdf Figure 6.
     import aut._
-    require(F.size > 0)
+    //require(F.size > 0)  // not really required
     type AC = Set[State]
     var H      = Map[State, (Boolean, Set[AC])]()
     var W      = Map[State, Map[AC, Int]]()
@@ -60,5 +60,4 @@ implicit class AutomataEmptiness[State](aut: Automata[State]) {
     }
     return true
   }
-
 }

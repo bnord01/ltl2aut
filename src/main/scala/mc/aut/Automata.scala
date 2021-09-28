@@ -6,6 +6,7 @@ import scala.language.implicitConversions
 
 trait APState {
   def posAP: Set[AP]
+
   def negAP: Set[AP]
 }
 
@@ -25,6 +26,7 @@ case class Automata[S: APView](Q: Set[S], I: Set[S], F: Set[Set[S]], d: Map[S, S
 implicit def prodAPView[S1: APView, S2: APView]: APView[(S1, S2)] = (s: (S1, S2)) =>
   new APState {
     def posAP = s._1.posAP ++ s._2.posAP
+
     def negAP = s._1.negAP ++ s._2.negAP
   }
 
@@ -41,28 +43,31 @@ def prodTrans[A: APView, B: APView](d1: Map[A, Set[A]], d2: Map[B, Set[B]]): Map
   for ((k1, v1) <- d1; (k2, v2) <- d2 if compat(k1, k2)) yield (k1, k2) -> cp(v1, v2)
 
 class ProdGBA[S1, S2](a1: Automata[S1], a2: Automata[S2])(implicit ev1: APView[S1], ev2: APView[S2])
-    extends Automata[(S1, S2)](
-      cp(a1.Q, a2.Q),
-      cp(a1.I, a2.I),
-      prodAcc(a1.Q, a2.Q, a1.F, a2.F),
-      prodTrans(a1.d, a2.d)
-    )(prodAPView(ev1, ev2))
+  extends Automata[(S1, S2)](
+    cp(a1.Q, a2.Q),
+    cp(a1.I, a2.I),
+    prodAcc(a1.Q, a2.Q, a1.F, a2.F),
+    prodTrans(a1.d, a2.d) withDefaultValue Set()
+  )(prodAPView(ev1, ev2))
 
 
 @Deprecated("Use StringAPView instead")
-/*implicit*/ val stringAPView : APView[String] = (s: String) => new APState {
-    val pos = "(?<=^|,)([a-zA-Z0-9]+)(?=,|$)".r
-    val neg = "(?<=^!|,!)([a-zA-Z0-9]+)(?=,|$)".r
-    def posAP = Set[AP]() ++ (pos findAllIn s map { p => AP(p) })
-    def negAP = Set[AP]() ++ (neg findAllIn s map { p => AP(p) })
-  }
+/*implicit*/ val stringAPView: APView[String] = (s: String) => new APState {
+  val pos = "(?<=^|,)([a-zA-Z0-9]+)(?=,|$)".r
+  val neg = "(?<=^!|,!)([a-zA-Z0-9]+)(?=,|$)".r
+
+  def posAP = Set[AP]() ++ (pos findAllIn s map { p => AP(p) })
+
+  def negAP = Set[AP]() ++ (neg findAllIn s map { p => AP(p) })
+}
 
 
+implicit class StringAPView(implicit aps: Set[AP]) extends APView[String] {
+  val pos = "(?<=^|,|:)([a-zA-Z0-9]+)(?=,|$)".r
 
-implicit class StringAPView(implicit aps:Set[AP]) extends APView[String] {    
-  val pos = "(?<=^|,|:)([a-zA-Z0-9]+)(?=,|$)".r    
-  def apply(str:String) = new APState {
+  def apply(str: String) = new APState {
     def posAP = Set[AP]() ++ (pos findAllIn str map { p => AP(p) })
-    def negAP = aps -- (pos findAllIn str map { p => AP(p) })  
+
+    def negAP = aps -- (pos findAllIn str map { p => AP(p) })
   }
 }
